@@ -12,9 +12,27 @@ npm run dev                   # http://localhost:3000
 
 Log in with one of the seeded accounts listed on the login page. **Ava Chen** already has a sample project (Community Skatepark Design) with a rubric. **Dr. Morgan Lee** is the evaluator for all learners.
 
-`npm run reset-db` deletes `data/` (SQLite DB and uploads). Restart the dev server afterwards; the DB is recreated and reseeded on first request.
+`npm run reset-db` deletes `data/` (or `DATA_DIR` if set), which holds the SQLite DB and uploads. Restart the dev server afterwards; the DB is recreated and reseeded on first request.
 
 `npm test` runs the unit tests (vitest). `npm run typecheck` runs `tsc`.
+
+## Deploy (Railway)
+
+1. Create a service from this GitHub repo. Railway's builder (Railpack) detects `npm run build` and `npm start`, installs the dev dependencies the build needs, and uses Node 22 from the `engines` field in `package.json`. Railway sets `PORT`, and `next start` uses it.
+2. Attach a volume mounted at `/data`.
+3. Set these variables:
+   - `OPENROUTER_API_KEY`
+   - `DATA_DIR=/data`
+4. Under Networking, generate a public domain.
+5. If the database fails to open with a permissions error (`EACCES` / `SQLITE_CANTOPEN`), set `RAILWAY_RUN_UID=0`.
+
+Notes:
+- **Volume size:** 0.5 GB on the trial plan and 5 GB on Hobby. Volumes can grow but not shrink.
+- **Single instance:** a service with a volume runs without replicas, and each deploy has a brief downtime.
+- **Backups:** turn on scheduled volume backups.
+- **Volume isn't available during the build:** that's fine, because the database is opened on the first request.
+- **AI summary timeout:** the evaluator's summary takes about 85 seconds and sends nothing until it's done. Railway's documentation allows 5 minutes with no data, but there's an unconfirmed community report of the edge cutting such requests at 60 seconds. If "Generate summary" fails on Railway, move the summary to background generation.
+- **Login is prototype-only:** there are no passwords, and the session cookie is an unsigned user id. Don't use it with real student data.
 
 ## Stack
 

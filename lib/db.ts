@@ -3,7 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { SEED_BRIEF, SEED_RUBRIC } from "./seed-data";
 
-export const DATA_DIR = path.join(process.cwd(), "data");
+// Point DATA_DIR at a persistent disk in deployment (e.g. a Railway volume at /data).
+// The ignore comment stops Turbopack tracing the whole project for this runtime-only path.
+export const DATA_DIR = path.resolve(/*turbopackIgnore: true*/ process.env.DATA_DIR || "data");
 export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 
 const SCHEMA = `

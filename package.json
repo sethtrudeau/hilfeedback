@@ -11,7 +11,7 @@
     "start": "next start",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "reset-db": "node -e \"require('fs').rmSync('data',{recursive:true,force:true})\""
+    "reset-db": "node -e \"require('fs').rmSync(process.env.DATA_DIR||'data',{recursive:true,force:true})\""
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
