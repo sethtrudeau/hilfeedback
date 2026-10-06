@@ -15,7 +15,16 @@ import type { Artifact, ArtifactType, AudioMode, RubricScore, User } from "@/lib
 
 export type FormState = { error?: string } | undefined;
 
-const ARTIFACT_TYPES: ArtifactType[] = ["written", "audio", "image", "video", "game", "other"];
+const ARTIFACT_TYPES: ArtifactType[] = [
+  "document",
+  "presentation",
+  "spreadsheet",
+  "audio",
+  "image",
+  "video",
+  "game",
+  "other",
+];
 
 function str(formData: FormData, key: string): string {
   const v = formData.get(key);

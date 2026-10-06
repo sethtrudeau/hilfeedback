@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fileKind, routeArtifact, type RouteInput } from "./routing";
 
-const base: RouteInput = { type: "written", audioMode: null, fileKind: null, fileSize: 0, text: null };
+const base: RouteInput = { type: "document", audioMode: null, fileKind: null, fileSize: 0, text: null };
 
 describe("fileKind", () => {
   it("classifies by extension when the browser sends no mime type", () => {
@@ -37,6 +37,12 @@ describe("routeArtifact", () => {
 
   it("sends readable text and transcripts to the AI", () => {
     expect(routeArtifact({ ...base, fileKind: "pdf", text: "My essay" })).toEqual({ aiReviewable: true });
+    expect(routeArtifact({ ...base, type: "presentation", fileKind: "pptx", text: "### Slide 1" })).toEqual({
+      aiReviewable: true,
+    });
+    expect(routeArtifact({ ...base, type: "spreadsheet", fileKind: "xlsx", text: "## Sheet: Budget" })).toEqual({
+      aiReviewable: true,
+    });
     expect(
       routeArtifact({ ...base, type: "audio", audioMode: "transcribe", fileKind: "audio", text: "Hi" }),
     ).toEqual({ aiReviewable: true });

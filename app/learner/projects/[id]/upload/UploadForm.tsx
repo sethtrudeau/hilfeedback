@@ -13,12 +13,22 @@ interface ArtifactOption {
 }
 
 const ACCEPT: Record<ArtifactType, string> = {
-  written: ".pdf,.docx,.pptx,.xlsx,.csv,.txt,.md",
+  document: ".pdf,.docx,.txt,.md",
+  presentation: ".pptx,.pdf",
+  spreadsheet: ".xlsx,.csv",
   audio: "audio/*",
   image: "image/*,.pdf",
   video: "video/*",
   game: "",
   other: "",
+};
+
+const FILE_HINTS: Partial<Record<ArtifactType, string>> = {
+  document: "PDF, Word (.docx), or a text file. From Google Docs: File → Download → Word or PDF.",
+  presentation:
+    "PowerPoint (.pptx) or PDF. From Google Slides: File → Download → PowerPoint. The AI reads slide text and speaker notes, but not images or charts.",
+  spreadsheet:
+    "Excel (.xlsx) or CSV. From Google Sheets: File → Download → Excel. The AI reads cell values and formulas, but not charts.",
 };
 
 export function UploadForm({
@@ -32,7 +42,7 @@ export function UploadForm({
 }) {
   const [state, action] = useActionState(submitArtifact, undefined);
   const [mode, setMode] = useState<"new" | "iteration">(defaultArtifactId ? "iteration" : "new");
-  const [newType, setNewType] = useState<ArtifactType>("written");
+  const [newType, setNewType] = useState<ArtifactType>("document");
   const [artifactId, setArtifactId] = useState(defaultArtifactId ?? artifacts[0]?.id);
   const [audioMode, setAudioMode] = useState<AudioMode | null>(null);
 
@@ -154,15 +164,10 @@ export function UploadForm({
           File
         </label>
         <input id="file" name="file" type="file" accept={ACCEPT[type] || undefined} className="input" />
-        {type === "written" && (
-          <p className="hint">
-            PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx), CSV, or a text file. For slides and spreadsheets the AI
-            reads the text, numbers and formulas, but not images or charts.
-          </p>
-        )}
+        {FILE_HINTS[type] && <p className="hint">{FILE_HINTS[type]}</p>}
       </div>
 
-      {(type === "written" || type === "other") && (
+      {(type === "document" || type === "other") && (
         <div>
           <label className="label" htmlFor="text">
             Or paste your text

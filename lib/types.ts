@@ -1,11 +1,21 @@
 export type Role = "learner" | "evaluator";
 export type ProjectStatus = "Active" | "Submitted" | "Evaluated";
-export type ArtifactType = "written" | "audio" | "image" | "video" | "game" | "other";
+export type ArtifactType =
+  | "document"
+  | "presentation"
+  | "spreadsheet"
+  | "audio"
+  | "image"
+  | "video"
+  | "game"
+  | "other";
 export type AudioMode = "transcribe" | "listen";
 export type RoutingLayer = "rule" | "manual";
 
 export const ARTIFACT_TYPE_LABELS: Record<ArtifactType, string> = {
-  written: "Written",
+  document: "Document",
+  presentation: "Presentation",
+  spreadsheet: "Spreadsheet",
   audio: "Audio",
   image: "Image / drawing / schematic",
   video: "Video",

@@ -125,6 +125,8 @@ function open(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
   db.exec(SCHEMA);
+  // The "written" artifact type was renamed to "document".
+  db.prepare("UPDATE artifacts SET type = 'document' WHERE type = 'written'").run();
   db.transaction(() => {
     const { n } = db.prepare("SELECT COUNT(*) AS n FROM users").get() as { n: number };
     if (n === 0) seed(db);
