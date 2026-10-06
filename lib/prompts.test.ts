@@ -3,6 +3,7 @@ import { feedbackSystemPrompt, formatRubric } from "./prompts";
 import { SEED_RUBRIC } from "./seed-data";
 
 const base = {
+  learnerFirstName: "Priya",
   projectTitle: "Skatepark",
   brief: "BRIEF TEXT",
   rubric: SEED_RUBRIC,
@@ -17,6 +18,10 @@ describe("feedbackSystemPrompt", () => {
     const prompt = feedbackSystemPrompt(base);
     expect(prompt).toContain("BRIEF TEXT");
     for (const c of SEED_RUBRIC.criteria) expect(prompt).toContain(c.name);
+  });
+
+  it("tells the model the learner's first name so it doesn't invent one", () => {
+    expect(feedbackSystemPrompt(base)).toMatch(/learner's first name is Priya/);
   });
 
   it("tells the model not to critique transcription artifacts for spoken work", () => {

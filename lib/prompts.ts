@@ -8,6 +8,7 @@ export interface PriorVersion {
 }
 
 export interface FeedbackPromptInput {
+  learnerFirstName: string;
   projectTitle: string;
   brief: string;
   rubric: Rubric | null;
@@ -54,6 +55,7 @@ How to give feedback:
 - End with 2 to 4 concrete next steps the learner can take.
 - Never give a grade, score, rubric level, or credit decision.
 - Only comment on what you can actually see or read in the artifact. If something is unclear, cut off or missing, say so instead of guessing.
+- The learner's first name is ${input.learnerFirstName}. Use only this name if you address them; don't use initials or names from elsewhere.
 - Write directly to the learner in plain, encouraging, honest language. Use short paragraphs or bullet points (Markdown). Keep your first response under about 350 words.
 - In follow-up messages, answer the learner's questions and help them think it through. Don't do the work for them.`,
   ];

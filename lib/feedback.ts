@@ -3,6 +3,7 @@ import {
   aiTurns,
   getAiLog,
   getProject,
+  getUser,
   getVersion,
   humanFeedback,
   listArtifacts,
@@ -71,6 +72,7 @@ async function generate(versionId: number, turns: ChatTurn[]): Promise<ChatTurn[
     {
       role: "system",
       content: feedbackSystemPrompt({
+        learnerFirstName: getUser(project.learner_id)!.name.split(" ")[0],
         projectTitle: project.title,
         brief: project.brief_text,
         rubric: parseRubric(project),
