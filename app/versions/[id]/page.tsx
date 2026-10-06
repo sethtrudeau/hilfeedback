@@ -9,7 +9,7 @@ import { ArtifactView } from "@/components/ArtifactView";
 import { FeedbackChat } from "@/components/FeedbackChat";
 import { HumanFeedbackList } from "@/components/HumanFeedbackList";
 import { SubmitButton } from "@/components/SubmitButton";
-import { Badge, StatusBadge } from "@/components/ui";
+import { Alert, Icon, PageHead, ProjectStatusBadge, StatusBadge, Tag } from "@/components/ui";
 import { RespondForm } from "./RespondForm";
 
 export default async function VersionPage({ params }: { params: Promise<{ id: string }> }) {
@@ -30,68 +30,86 @@ export default async function VersionPage({ params }: { params: Promise<{ id: st
   const canRequest = project.status !== "Evaluated" && !pending.some((d) => d.layer === "manual");
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Link href={projectHref} className="link text-sm">
-          ← {project.title}
-        </Link>
-        <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="h1">{version.artifact_title}</h1>
-          <Badge>{ARTIFACT_TYPE_LABELS[version.artifact_type]}</Badge>
-          {version.audio_mode && <Badge>{version.audio_mode === "listen" ? "Listen" : "Transcribe"}</Badge>}
-          <StatusBadge status={project.status} />
-        </div>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-stone-500">Submitted {formatTime(version.submitted_at)} · Versions:</span>
+    <div className="flex flex-col gap-7">
+      <PageHead
+        crumbs={[
+          isLearner ? { label: "My projects", href: "/learner" } : { label: "Learners", href: "/evaluator" },
+          { label: project.title, href: projectHref },
+          { label: version.artifact_title },
+        ]}
+        badges={
+          <>
+            <Tag>{ARTIFACT_TYPE_LABELS[version.artifact_type]}</Tag>
+            {version.audio_mode && <Tag>{version.audio_mode === "listen" ? "Listen" : "Transcribe"}</Tag>}
+            {pending.length > 0 ? (
+              <StatusBadge tone="warning">Awaiting human review</StatusBadge>
+            ) : (
+              <ProjectStatusBadge status={project.status} />
+            )}
+          </>
+        }
+        title={version.artifact_title}
+        subtitle={`v${version.version_number} of ${versions.length}, submitted ${formatTime(version.submitted_at)}.`}
+        actions={
+          isLearner &&
+          project.status === "Active" && (
+            <Link
+              href={`/learner/projects/${project.id}/upload?artifact=${version.artifact_id}`}
+              className="btn-secondary btn-sm"
+            >
+              <Icon name="plus" />
+              Upload a new iteration
+            </Link>
+          )
+        }
+      />
+
+      {versions.length > 1 && (
+        <nav aria-label="Versions" className="flex flex-wrap items-center gap-2">
           {versions.map((v) => (
             <Link
               key={v.id}
               href={`/versions/${v.id}`}
-              className={`rounded px-2 py-0.5 ${v.id === version.id ? "bg-teal-700 text-white" : "bg-stone-100 hover:bg-stone-200"}`}
+              className="chip"
+              aria-current={v.id === version.id ? "page" : undefined}
             >
               v{v.version_number}
             </Link>
           ))}
-          {isLearner && project.status === "Active" && (
-            <Link href={`/learner/projects/${project.id}/upload?artifact=${version.artifact_id}`} className="link ml-2">
-              + Upload a new iteration
-            </Link>
-          )}
-        </div>
-      </div>
+        </nav>
+      )}
 
       {pending.length > 0 && (
-        <div className="card border-amber-300 bg-amber-50 text-sm">
-          <h2 className="font-medium text-amber-900">Waiting for human review</h2>
-          <ul className="mt-1 list-disc pl-5 text-amber-900">
+        <Alert tone="warning" title="Waiting for human review">
+          <ul className="mt-1 list-disc pl-5">
             {pending.map((d) => (
               <li key={d.id}>{d.reason}</li>
             ))}
           </ul>
           {isLearner && (
-            <p className="mt-2 text-amber-900">
-              {evaluator.name} will review this. You can keep working in the meantime, and you&apos;ll get a notification
+            <p className="mt-2">
+              {evaluator.name} will review this. You can keep working in the meantime. You&apos;ll get a notification
               when they respond.
             </p>
           )}
-        </div>
+        </Alert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="card space-y-3">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
+        <section className="card flex flex-col gap-4">
           <h2 className="h2">Artifact</h2>
           <ArtifactView version={version} />
         </section>
 
-        <section className="space-y-6">
+        <div className="flex flex-col gap-6">
           {human.length > 0 && (
-            <div className="card space-y-3">
+            <section className="card flex flex-col gap-4">
               <h2 className="h2">Feedback from {isLearner ? "your evaluator" : "evaluators"}</h2>
               <HumanFeedbackList items={human} />
-            </div>
+            </section>
           )}
 
-          <div className="card space-y-3">
+          <section className="card flex flex-col gap-4">
             <h2 className="h2">AI feedback</h2>
             {version.ai_reviewable ? (
               <FeedbackChat
@@ -101,38 +119,35 @@ export default async function VersionPage({ params }: { params: Promise<{ id: st
                 autoStart={isLearner}
               />
             ) : (
-              <p className="text-sm text-stone-600">
-                No AI feedback for this artifact. {ruleDecision?.reason ?? ""}
-              </p>
+              <p className="text-sm">No AI feedback for this artifact. {ruleDecision?.reason ?? ""}</p>
             )}
-          </div>
+          </section>
 
           {!isLearner && (
-            <div className={`card space-y-3 ${pending.length ? "border-amber-300" : ""}`}>
+            <section className="card flex flex-col gap-4">
               <h2 className="h2">Respond to the learner</h2>
               <RespondForm versionId={version.id} />
-            </div>
+            </section>
           )}
 
           {canRequest && (
-            <details className="card">
-              <summary className="cursor-pointer text-sm font-medium">
-                {isLearner ? "Ask a person to review this" : "Add this to your pending queue"}
-              </summary>
-              <form action={requestHumanReview} className="mt-3 space-y-3">
+            <details className="accordion">
+              <summary>{isLearner ? "Ask a person to review this" : "Add this to your pending queue"}</summary>
+              <form action={requestHumanReview} className="accordion-body flex flex-col gap-3">
                 <input type="hidden" name="version_id" value={version.id} />
-                <textarea
-                  name="note"
-                  className="input min-h-20"
-                  placeholder={isLearner ? "What would you like a person to look at? (optional)" : "Note to self (optional)"}
-                />
-                <SubmitButton className="btn-secondary" pendingText="Requesting…">
-                  Request human review
-                </SubmitButton>
+                <label className="label" htmlFor="review-note">
+                  {isLearner ? "What would you like a person to look at? Optional." : "Note to self, optional"}
+                </label>
+                <textarea id="review-note" name="note" className="input min-h-20" />
+                <div>
+                  <SubmitButton className="btn-secondary btn-sm" pendingText="Requesting">
+                    Request human review
+                  </SubmitButton>
+                </div>
               </form>
             </details>
           )}
-        </section>
+        </div>
       </div>
     </div>
   );

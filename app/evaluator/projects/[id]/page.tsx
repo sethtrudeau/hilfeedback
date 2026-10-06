@@ -15,18 +15,9 @@ import { formatTime } from "@/lib/format";
 import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
 import { BriefPanel } from "@/components/BriefPanel";
 import { EvaluationView } from "@/components/EvaluationView";
-import { Badge, StatusBadge } from "@/components/ui";
+import { Alert, PageHead, ProjectStatusBadge, Tag } from "@/components/ui";
 import { EvaluationForm } from "./EvaluationForm";
 import { SummaryPanel } from "./SummaryPanel";
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="card py-4">
-      <div className="text-2xl font-semibold">{value}</div>
-      <div className="text-xs text-stone-500">{label}</div>
-    </div>
-  );
-}
 
 export default async function EvaluatorProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser("evaluator");
@@ -40,77 +31,83 @@ export default async function EvaluatorProjectPage({ params }: { params: Promise
   const evaluation = getEvaluation(project.id);
   const activity = lastActivity(project.id);
   const stale = Boolean(project.summary_updated_at && activity && activity > project.summary_updated_at);
+  const stats = [
+    { label: "Artifacts", value: artifacts.length },
+    { label: "Versions submitted", value: versionCount },
+    { label: "Human feedback given", value: humanFeedbackCount(project.id) },
+    { label: "Awaiting human review", value: pending.size },
+  ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Link href="/evaluator" className="link text-sm">
-          ← Learners
-        </Link>
-        <h1 className="h1 mt-1 flex items-center gap-3">
-          {project.title} <StatusBadge status={project.status} />
-        </h1>
-        <p className="text-sm text-stone-600">
-          {learner.name}
-          {project.submitted_at && ` · final project submitted ${formatTime(project.submitted_at)}`}
-        </p>
-      </div>
+    <div className="flex flex-col gap-7">
+      <PageHead
+        crumbs={[{ label: "Learners", href: "/evaluator" }, { label: project.title }]}
+        badges={<ProjectStatusBadge status={project.status} />}
+        title={project.title}
+        subtitle={
+          project.submitted_at
+            ? `${learner.name}, final project submitted ${formatTime(project.submitted_at)}.`
+            : `${learner.name}.`
+        }
+      />
 
       {project.status === "Submitted" && (
-        <p className="card border-sky-300 bg-sky-50 text-sm">
-          This final project is ready for evaluation. Review the report below, then complete the rubric at the bottom
-          of the page.
-        </p>
+        <Alert title="Ready for evaluation">
+          Review the report below, then complete the rubric at the bottom of the page.
+        </Alert>
       )}
       {evaluation && <EvaluationView evaluation={evaluation} />}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat label="Artifacts" value={artifacts.length} />
-        <Stat label="Versions submitted" value={versionCount} />
-        <Stat label="Human feedback given" value={humanFeedbackCount(project.id)} />
-        <Stat label="Awaiting human review" value={pending.size} />
-      </div>
+      <section className="stats" aria-label="Project report">
+        {stats.map((s) => (
+          <div key={s.label} className="stat">
+            <span className="eyebrow">{s.label}</span>
+            <span className="stat-num">{s.value}</span>
+          </div>
+        ))}
+      </section>
 
-      <section className="card">
+      <section className="flex flex-col gap-3">
         <h2 className="h2">Artifacts</h2>
         {artifacts.length === 0 ? (
-          <p className="mt-2 text-sm text-stone-500">No artifacts yet.</p>
+          <p className="text-sm">No artifacts yet.</p>
         ) : (
-          <table className="mt-3 w-full text-left text-sm">
-            <thead className="text-xs text-stone-500">
-              <tr>
-                <th className="py-1 font-medium">Artifact</th>
-                <th className="py-1 font-medium">Type</th>
-                <th className="py-1 font-medium">Iterations</th>
-                <th className="py-1 font-medium">Versions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {artifacts.map((a) => (
-                <tr key={a.id} className="border-t border-stone-100 align-top">
-                  <td className="py-2 font-medium">{a.title}</td>
-                  <td className="py-2">
-                    <Badge>{ARTIFACT_TYPE_LABELS[a.type]}</Badge>
-                  </td>
-                  <td className="py-2">{a.versions.length - 1}</td>
-                  <td className="py-2">
-                    <div className="flex flex-wrap gap-1">
-                      {a.versions.map((v) => (
-                        <Link
-                          key={v.id}
-                          href={`/versions/${v.id}`}
-                          className={`rounded px-2 py-0.5 ${pending.has(v.id) ? "bg-amber-100 text-amber-900" : "bg-stone-100 hover:bg-stone-200"}`}
-                          title={pending.has(v.id) ? "Awaiting human review" : formatTime(v.submitted_at)}
-                        >
-                          v{v.version_number}
-                        </Link>
-                      ))}
-                    </div>
-                  </td>
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Artifact</th>
+                  <th>Type</th>
+                  <th className="num">Iterations</th>
+                  <th>Versions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {artifacts.map((a) => (
+                  <tr key={a.id}>
+                    <td className="font-medium">{a.title}</td>
+                    <td>
+                      <Tag>{ARTIFACT_TYPE_LABELS[a.type]}</Tag>
+                    </td>
+                    <td className="num">{a.versions.length - 1}</td>
+                    <td>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.versions.map((v) => (
+                          <Link key={v.id} href={`/versions/${v.id}`} title={formatTime(v.submitted_at)}>
+                            v{v.version_number}
+                            {pending.has(v.id) && <span className="sr-only">, awaiting human review</span>}
+                          </Link>
+                        ))}
+                        {a.versions.some((v) => pending.has(v.id)) && (
+                          <span className="badge badge-warning">Awaiting review</span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

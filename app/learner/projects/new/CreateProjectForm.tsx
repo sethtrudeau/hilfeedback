@@ -3,16 +3,17 @@
 import { useActionState } from "react";
 import { createProject } from "@/app/actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import { Alert } from "@/components/ui";
 
 export function CreateProjectForm() {
   const [state, action] = useActionState(createProject, undefined);
   return (
-    <form action={action} className="card space-y-5">
+    <form action={action} className="card flex flex-col gap-5">
       <div>
         <label className="label" htmlFor="title">
           Project title
         </label>
-        <input id="title" name="title" required className="input" placeholder="e.g. Community Skatepark Design" />
+        <input id="title" name="title" required className="input" placeholder="Community Skatepark Design" />
       </div>
       <div>
         <label className="label" htmlFor="brief_file">
@@ -30,8 +31,10 @@ export function CreateProjectForm() {
         </label>
         <textarea id="brief_text" name="brief_text" className="input min-h-40" />
       </div>
-      {state?.error && <p className="text-sm text-rose-700">{state.error}</p>}
-      <SubmitButton pendingText="Reading your plan and finding the rubric…">Create project</SubmitButton>
+      {state?.error && <Alert tone="error">{state.error}</Alert>}
+      <div>
+        <SubmitButton pendingText="Reading your plan and finding the rubric">Create project</SubmitButton>
+      </div>
     </form>
   );
 }

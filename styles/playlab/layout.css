@@ -1,0 +1,31 @@
+/* Six containers, one 12-column grid, three section rhythms. */
+:root {
+  --w-prose: 640px;
+  --w-form: 520px;
+  --w-app: 1280px;
+  --w-marketing: 1200px;
+  --w-wide: 1440px;
+  --w-bleed: 100%;
+
+  --grid-columns: 12; /* @kind other */
+  --grid-gutter: 24px;
+  --grid-gutter-mobile: 16px;
+  --grid-margin: 48px;
+  --grid-margin-mobile: 16px;
+
+  --section-y-sm: 64px;
+  --section-y-md: 96px;
+  --section-y-lg: 160px;
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gutter);
+  max-width: var(--w-marketing);
+  margin: 0 auto;
+  padding: 0 var(--grid-margin);
+}
+@media (max-width: 720px) {
+  .grid-12 { gap: var(--grid-gutter-mobile); padding: 0 var(--grid-margin-mobile); }
+}

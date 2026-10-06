@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Md } from "./ui";
+import { Alert, Md } from "./ui";
 import type { ChatTurn } from "@/lib/types";
 
 export function FeedbackChat({
@@ -51,34 +51,39 @@ export function FeedbackChat({
 
   return (
     <div className="space-y-4">
-      {turns.length === 0 && !loading && !error && (
-        <p className="text-sm text-stone-500">No AI feedback yet.</p>
-      )}
+      {turns.length === 0 && !loading && !error && <p className="text-sm">No AI feedback yet.</p>}
       {turns.map((t, i) =>
         t.role === "assistant" ? (
-          <div key={i} className="rounded-xl bg-teal-50 p-4">
-            <div className="mb-1 text-xs font-medium text-teal-800">AI coach</div>
+          <div key={i} className="panel">
+            <div className="eyebrow mb-1">AI coach</div>
             <Md>{t.content}</Md>
           </div>
         ) : (
-          <div key={i} className="ml-auto max-w-[85%] rounded-xl bg-stone-100 p-4 text-sm whitespace-pre-wrap">
-            <div className="mb-1 text-xs font-medium text-stone-600">Learner</div>
+          <div
+            key={i}
+            className="ml-auto max-w-[85%] rounded-surface border border-outline bg-surface2 p-4 text-sm whitespace-pre-wrap"
+          >
+            <div className="eyebrow mb-1">Learner</div>
             {t.content}
           </div>
         ),
       )}
       {loading && (
-        <p className="animate-pulse text-sm text-teal-800">
-          {turns.length === 0 ? "Reading your work and writing feedback. This can take up to a minute…" : "Thinking…"}
+        <p className="flex items-center gap-2 text-sm">
+          <span className="spinner" aria-hidden="true" />
+          {turns.length === 0 ? "Reading your work and writing feedback. This can take up to a minute." : "Thinking…"}
         </p>
       )}
       {error && (
-        <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">
-          {error}{" "}
-          <button className="link font-medium" onClick={() => send(turns.length ? input.trim() || undefined : undefined)}>
+        <Alert tone="error" title="The AI couldn't respond.">
+          <p>{error}</p>
+          <button
+            className="btn-secondary btn-sm mt-3"
+            onClick={() => send(turns.length ? input.trim() || undefined : undefined)}
+          >
             Try again
           </button>
-        </div>
+        </Alert>
       )}
       {canChat && turns.length > 0 && (
         <form
@@ -89,8 +94,9 @@ export function FeedbackChat({
           }}
         >
           <textarea
-            className="input min-h-20"
-            placeholder="Ask a question about the feedback, or talk through your next steps…"
+            className="input min-h-24"
+            aria-label="Message the AI coach"
+            placeholder="Ask about the feedback, or talk through your next steps"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -100,9 +106,9 @@ export function FeedbackChat({
               }
             }}
           />
-          <div className="flex items-center justify-between">
-            <span className="hint">⌘/Ctrl + Enter to send</span>
-            <button className="btn-primary" disabled={loading || !input.trim()}>
+          <div className="flex items-center justify-between gap-4">
+            <span className="caption">Cmd or Ctrl and Enter sends.</span>
+            <button className="btn-primary btn-sm" disabled={loading || !input.trim()}>
               Send
             </button>
           </div>

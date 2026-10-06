@@ -1,0 +1,125 @@
+/* Page colors, neutral ramp, highlights, the 16-hue palette, semantic tokens. */
+:root, [data-theme="light"] {
+  /* Page colors — cream is the default */
+  --page-grey: #fafafa;
+  --page-cream: #fbf9f6;
+  --page-white: #ffffff;
+  --background: #fbf9f6;
+
+  /* Neutral ramp */
+  --neutral-0: #ffffff;
+  --neutral-50: #fbf9f6;
+  --neutral-100: #eff0e5;
+  --neutral-200: #dbdbdb;
+  --neutral-300: #b8b8b1;
+  --neutral-400: #8f8f88;
+  --neutral-500: #6e6e68;
+  --neutral-600: #535350;
+  --neutral-700: #3a3a38;
+  --neutral-800: #252528;
+  --neutral-900: #181a20;
+  --neutral-950: #0c0f14;
+
+  /* Surfaces */
+  --surface1: #eff0e5;
+  --surface2: #ffffff;
+  --surface3: #dbdbdb;
+  --overlay: #ffffff;
+  --scrim: rgba(12, 15, 20, 0.4);
+
+  /* One hairline — outline, border and hairline are aliases */
+  --outline: #dbdbdb;
+  --border: #dbdbdb;
+  --hairline: #dbdbdb;
+  --outline-hover: #b8b8b1;
+  --outline-quiet: #dbdbdb;
+
+  /* Ink and text */
+  --text1: #0c0f14;
+  --text2: #535350;
+  --text3: #6e6e68;
+  --text4: #8f8f88;
+  --ink: #0c0f14;
+  --ink-inverse: #ffffff;
+
+  /* Highlights — mist is the default selected state */
+  --highlight-mist: #eff0e5;
+  --highlight-yellow: #feffa0;
+  --highlight-chartreuse: #c8ff3d;
+  --highlighter: #eff0e5;
+  --on-highlighter: #0c0f14;
+
+  --link: #356fe5;
+  --code-surface: #f6f4ee;
+  --code-text: #0c0f14;
+  --code-keyword: #356fe5;
+  --code-comment: #6e6e68;
+
+  /* Status */
+  --success: #00832d;
+  --success-bg: rgba(0, 131, 45, 0.10);
+  --warning: #ff6b2e;
+  --warning-bg: rgba(255, 107, 46, 0.10);
+  --error: #df3737;
+  --error-bg: rgba(223, 55, 55, 0.06);
+  --info: #356fe5;
+  --info-bg: #b0d4ff;
+
+  /* The 16-hue palette — one palette for every surface, used with restraint */
+  --tan: #c1bab2;
+  --warm-tan: #bd9984;
+  --pale-sky: #b0d4ff;
+  --pale-cyan: #a2dff0;
+  --mid-blue: #569aff;
+  --blue: #356fe5;
+  --orange: #ff6b2e;
+  --red: #df3737;
+  --yellow-bright: #fff34d;
+  --chartreuse: #c8ff3d;
+  --olive: #c3c96e;
+  --lime: #8abe3e;
+  --green: #00832d;
+  --palest-pink: #ffe1fb;
+  --pale-pink: #ffb6f1;
+  --pink: #fd93d5;
+}
+
+[data-theme="dark"] {
+  --background: #0c0f14;
+  --page-grey: #0c0f14;
+  --page-cream: #0c0f14;
+  --page-white: #0c0f14;
+  --surface1: #14171d;
+  --surface2: #050608;
+  --surface3: #252528;
+  --overlay: #1c1f25;
+  --scrim: rgba(0, 0, 0, 0.5);
+  --outline: #3a3a38;
+  --border: #3a3a38;
+  --hairline: #3a3a38;
+  --outline-hover: #535350;
+  --outline-quiet: #3a3a38;
+  --text1: #fbf9f6;
+  --text2: #b8b8b1;
+  --text3: #a0a097;
+  --text4: #6e6e68;
+  --ink: #fbf9f6;
+  --ink-inverse: #0c0f14;
+  --highlight-mist: #eff0e5;
+  --highlight-yellow: #feffa0;
+  --highlight-chartreuse: #c8ff3d;
+  --highlighter: #eff0e5;
+  --on-highlighter: #0c0f14;
+  --link: #7ba0f0;
+  --code-surface: #050608;
+  --code-text: #fbf9f6;
+  --code-keyword: #7ba0f0;
+  --code-comment: #8f8f88;
+  --success: #2ea958;
+  --success-bg: rgba(46, 169, 88, 0.18);
+  --warning: #ff6b2e;
+  --warning-bg: rgba(255, 107, 46, 0.18);
+  --error: #ed7b75;
+  --error-bg: rgba(237, 123, 117, 0.14);
+  --info-bg: rgba(53, 111, 229, 0.22);
+}

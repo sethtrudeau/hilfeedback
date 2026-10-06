@@ -1,0 +1,26 @@
+/* Four durations, three easings. No transition: all. */
+:root {
+  --ease-fast: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-medium: cubic-bezier(0.2, 0.8, 0.2, 1); /* @kind other */
+  --ease-slow: cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --dur-instant: 100ms; /* @kind other */
+  --dur-fast: 140ms; /* @kind other */
+  --dur-medium: 220ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+}
+
+/* Mode-switch cross-fade — color properties only, never transform or shadow. */
+:root {
+  transition: background-color var(--dur-medium) var(--ease-medium),
+              color var(--dur-medium) var(--ease-medium),
+              border-color var(--dur-medium) var(--ease-medium);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  :root { transition: none; }
+}

@@ -1,0 +1,9 @@
+/* From the design system's tokens/fonts.css. The Adobe Fonts (Typekit) stylesheet is loaded
+   with a <link> in app/layout.tsx instead of an @import. The kit checks the referrer, so on an
+   origin it isn't authorised for, the stack falls back to Helvetica Neue / Helvetica / Arial.
+   Do not substitute another family. */
+:root {
+  --font: "neue-haas-grotesk-text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500;
+}

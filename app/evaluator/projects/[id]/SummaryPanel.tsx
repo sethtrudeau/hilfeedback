@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { generateSummary } from "@/app/actions";
 import { SubmitButton } from "@/components/SubmitButton";
-import { Md } from "@/components/ui";
+import { Alert, Md } from "@/components/ui";
 
 export function SummaryPanel({
   projectId,
@@ -18,29 +18,28 @@ export function SummaryPanel({
 }) {
   const [state, action] = useActionState(generateSummary, undefined);
   return (
-    <section className="card space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <section className="card flex flex-col gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="h2">AI summary of feedback</h2>
           {updatedAt && (
-            <p className="text-xs text-stone-500">
-              Generated {updatedAt}
-              {stale && <span className="text-amber-700"> · new feedback since then</span>}
+            <p className="meta mt-1">
+              Generated {updatedAt}.{stale && " There’s new feedback since then."}
             </p>
           )}
         </div>
         <form action={action}>
           <input type="hidden" name="project_id" value={projectId} />
-          <SubmitButton className="btn-secondary" pendingText="Summarizing… (up to a minute)">
+          <SubmitButton className="btn-secondary btn-sm" pendingText="Summarizing, up to a minute">
             {summary ? "Regenerate" : "Generate summary"}
           </SubmitButton>
         </form>
       </div>
-      {state?.error && <p className="text-sm text-rose-700">{state.error}</p>}
+      {state?.error && <Alert tone="error">{state.error}</Alert>}
       {summary ? (
         <Md>{summary}</Md>
       ) : (
-        <p className="text-sm text-stone-500">
+        <p className="text-sm">
           Summarizes every artifact, version, AI conversation and human response so you can see how the work developed.
         </p>
       )}

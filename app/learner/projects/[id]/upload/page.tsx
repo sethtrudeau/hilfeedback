@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getProjectFor, listArtifacts } from "@/lib/data";
+import { PageHead } from "@/components/ui";
 import { UploadForm } from "./UploadForm";
 
 export default async function UploadPage({
@@ -24,13 +24,15 @@ export default async function UploadPage({
   const artifactParam = (await searchParams).artifact;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <Link href={`/learner/projects/${project.id}`} className="link text-sm">
-          ← {project.title}
-        </Link>
-        <h1 className="h1 mt-1">Add an artifact</h1>
-      </div>
+    <div className="mx-auto flex max-w-(--w-form) flex-col gap-6">
+      <PageHead
+        crumbs={[
+          { label: "My projects", href: "/learner" },
+          { label: project.title, href: `/learner/projects/${project.id}` },
+          { label: "Add an artifact" },
+        ]}
+        title="Add an artifact"
+      />
       <UploadForm
         projectId={project.id}
         artifacts={artifacts}

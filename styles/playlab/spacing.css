@@ -1,0 +1,17 @@
+/* 8px base scale, nine steps. */
+:root {
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  --r-control: 4px;
+  --r-surface: 8px;
+  --r-container: 16px;
+  --r-pill: 999px;
+}

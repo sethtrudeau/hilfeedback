@@ -1,64 +1,666 @@
 @import "tailwindcss";
 
-body {
-  @apply bg-stone-50 text-stone-900 antialiased;
+/* Playlab design system v3.1.0 tokens, copied unchanged (see styles/playlab/README.md). */
+@import "../styles/playlab/fonts.css";
+@import "../styles/playlab/colors.css";
+@import "../styles/playlab/typography.css";
+@import "../styles/playlab/spacing.css";
+@import "../styles/playlab/layout.css";
+@import "../styles/playlab/elevation.css";
+@import "../styles/playlab/motion.css";
+@import "../styles/playlab/base.css" layer(base);
+
+/* Expose the semantic tokens to Tailwind utilities (bg-surface1, text-fg2, rounded-surface, …). */
+@theme inline {
+  --font-sans: var(--font);
+  --color-ink: var(--ink);
+  --color-fg: var(--text1);
+  --color-fg2: var(--text2);
+  --color-fg3: var(--text3);
+  --color-page: var(--background);
+  --color-surface1: var(--surface1);
+  --color-surface2: var(--surface2);
+  --color-outline: var(--outline);
+  --color-mist: var(--highlight-mist);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --radius-control: var(--r-control);
+  --radius-surface: var(--r-surface);
 }
 
-@utility card {
-  @apply rounded-xl border border-stone-200 bg-white p-5 shadow-sm;
-}
-@utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
-}
-@utility btn-primary {
-  @apply btn bg-teal-700 text-white hover:bg-teal-800;
-}
-@utility btn-secondary {
-  @apply btn border border-stone-300 bg-white text-stone-800 hover:bg-stone-100;
-}
-@utility btn-danger {
-  @apply btn bg-rose-700 text-white hover:bg-rose-800;
-}
-@utility input {
-  @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 focus:outline-none;
-}
-@utility label {
-  @apply mb-1 block text-sm font-medium text-stone-700;
-}
-@utility hint {
-  @apply mt-1 text-xs text-stone-500;
-}
-@utility link {
-  @apply text-teal-700 underline-offset-2 hover:underline;
-}
-@utility h1 {
-  @apply text-2xl font-semibold tracking-tight;
-}
-@utility h2 {
-  @apply text-lg font-semibold;
+/* Component specs from the design system (components/*). Focus is a fill, never a ring. */
+@layer components {
+  /* Layout containers: no ad-hoc max-widths. */
+  .page {
+    max-width: var(--w-app);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--grid-margin) var(--space-2xl);
+  }
+  .page-bar {
+    max-width: var(--w-app);
+    margin: 0 auto;
+    padding-inline: var(--grid-margin);
+  }
+  @media (max-width: 720px) {
+    .page {
+      padding: var(--space-lg) var(--grid-margin-mobile) var(--space-2xl);
+    }
+    .page-bar {
+      padding-inline: var(--grid-margin-mobile);
+    }
+  }
+
+  /* Type */
+  .h1 {
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-lh);
+    letter-spacing: var(--text-heading-ls);
+    font-weight: 500;
+  }
+  @media (min-width: 720px) {
+    .h1 {
+      font-size: var(--text-title-size);
+      line-height: var(--text-title-lh);
+      letter-spacing: var(--text-title-ls);
+    }
+  }
+  .h2 {
+    font-size: var(--text-subheading-size);
+    line-height: var(--text-subheading-lh);
+    letter-spacing: var(--text-subheading-ls);
+    font-weight: 500;
+  }
+  .eyebrow {
+    font-size: var(--text-label-size);
+    line-height: var(--text-label-lh);
+    font-weight: 500;
+    color: var(--text3);
+  }
+  .meta {
+    font-size: var(--text-meta-size);
+    line-height: var(--text-meta-lh);
+    color: var(--text2);
+  }
+  .caption {
+    font-size: var(--text-caption-size);
+    line-height: var(--text-caption-lh);
+    color: var(--text3);
+  }
+  .plain {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+  }
+
+  /* Buttons: boxy, ink-led. Never a pill, never a highlight fill. */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-destructive {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    height: 44px;
+    padding: 12px 22px;
+    border-radius: var(--r-control);
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-instant) var(--ease-fast),
+      color var(--dur-instant) var(--ease-fast),
+      border-color var(--dur-instant) var(--ease-fast),
+      transform var(--dur-fast) var(--ease-fast);
+  }
+  .btn-sm {
+    height: 36px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .btn-primary {
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  .btn-primary:hover {
+    background-color: var(--neutral-800);
+  }
+  .btn-secondary {
+    background-color: var(--surface2);
+    color: var(--ink);
+    border-color: var(--outline);
+  }
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--ink);
+  }
+  .btn-secondary:hover,
+  .btn-ghost:hover {
+    background-color: var(--surface1);
+  }
+  .btn-destructive {
+    background-color: var(--surface2);
+    color: var(--error);
+    border-color: var(--error);
+  }
+  .btn-destructive:hover {
+    background-color: var(--error-bg);
+  }
+  :is(.btn-primary, .btn-secondary, .btn-ghost, .btn-destructive):active {
+    transform: translateY(1px);
+  }
+  :is(.btn-primary, .btn-secondary, .btn-ghost):focus-visible {
+    outline: none;
+    background-color: var(--highlight-mist);
+    color: var(--on-highlighter);
+  }
+  :is(.btn-primary, .btn-secondary, .btn-ghost, .btn-destructive):disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  /* Loading keeps the button legible; the label is swapped for a spinner and status text. */
+  :is(.btn-primary, .btn-secondary, .btn-ghost, .btn-destructive)[aria-busy="true"] {
+    opacity: 1;
+  }
+
+  /* Inline text button styled as a link. */
+  .link {
+    font: inherit;
+    font-weight: 500;
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Cards: outlined surface directly on the page. 8px radius, 24px padding, no shadow. */
+  .card {
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+    padding: var(--space-lg);
+  }
+  a.card {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+    transition: border-color var(--dur-instant) var(--ease-fast);
+  }
+  a.card:hover {
+    border-color: var(--outline-hover);
+  }
+  a.card:focus-visible {
+    outline: none;
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  /* Colour enters a card as fill, not border. */
+  .panel {
+    background-color: var(--surface1);
+    border-radius: var(--r-surface);
+    padding: var(--space-md);
+  }
+
+  /* Form fields: 48px, hairline, 4px radius. Focus is a mist fill. */
+  .label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 18px;
+    font: inherit;
+    font-size: 16px;
+    color: var(--text1);
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-control);
+    outline: none;
+    transition:
+      background-color var(--dur-fast) var(--ease-fast),
+      color var(--dur-fast) var(--ease-fast);
+  }
+  .input:focus {
+    background-color: var(--highlight-mist);
+  }
+  .input::placeholder {
+    color: var(--text4);
+  }
+  select.input {
+    appearance: none;
+    padding-right: 40px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='none' stroke='%236e6e68' stroke-linecap='round' stroke-linejoin='round' stroke-width='16' d='m208 96-80 80-80-80'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+  }
+  input[type="file"].input {
+    padding: 6px;
+    font-size: 14px;
+    color: var(--text2);
+  }
+  input[type="file"].input::file-selector-button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    height: 36px;
+    padding: 0 16px;
+    margin-right: 12px;
+    color: var(--ink);
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-control);
+    cursor: pointer;
+  }
+  input[type="file"].input::file-selector-button:hover {
+    background-color: var(--surface1);
+  }
+  input[type="radio"] {
+    appearance: none;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    border: 1px solid var(--outline);
+    border-radius: 50%;
+    background-color: var(--surface2);
+    cursor: pointer;
+  }
+  /* Selected draws an 8px ink dot; the border stays hairline. */
+  input[type="radio"]:checked {
+    background-color: var(--ink);
+    box-shadow: inset 0 0 0 4px var(--surface2);
+  }
+  input[type="radio"]:not(:checked):focus-visible {
+    outline: none;
+    background-color: var(--highlight-mist);
+  }
+  input[type="radio"]:focus-visible {
+    outline: none;
+  }
+
+  /* Underline tabs: hairline group, active tab is 500 in ink. No second, thicker line. */
+  .tabs {
+    display: flex;
+    gap: var(--space-lg);
+    border-bottom: 1px solid var(--outline);
+  }
+  .tab {
+    padding-bottom: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color var(--dur-instant) var(--ease-fast);
+  }
+  .tab:hover {
+    color: var(--ink);
+  }
+  .tab[aria-current="page"] {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Filter chip: selected is a mist fill at 500; keyboard focus is an ink fill. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text1);
+    text-decoration: none;
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-pill);
+    transition: background-color var(--dur-fast) var(--ease-medium);
+  }
+  .chip:hover {
+    background-color: var(--surface1);
+  }
+  .chip[aria-current="page"] {
+    font-weight: 500;
+    background-color: var(--highlight-mist);
+  }
+  .chip:focus-visible {
+    outline: none;
+    background-color: var(--ink);
+    border-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+
+  /* Tag: static category label. Status badge: tinted, sentence case, 12px 500. */
+  .tag,
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    border-radius: var(--r-pill);
+  }
+  .tag {
+    padding: 4px 12px;
+    color: var(--text1);
+    border-color: var(--outline);
+  }
+  .badge {
+    padding: 3px 8px;
+  }
+  .badge-neutral {
+    background-color: var(--surface2);
+    color: var(--text2);
+    border-color: var(--outline);
+  }
+  .badge-info {
+    background-color: var(--info-bg);
+    color: var(--ink);
+  }
+  .badge-success {
+    background-color: var(--success-bg);
+    color: var(--success);
+  }
+  .badge-warning {
+    background-color: var(--warning-bg);
+    color: var(--warning);
+  }
+  .badge-error {
+    background-color: var(--error-bg);
+    color: var(--error);
+  }
+  .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-inverse);
+    background-color: var(--ink);
+    border-radius: var(--r-pill);
+  }
+
+  /* Alert: full 1px border in the variant colour over a tinted fill. Never a side stripe. */
+  .alert {
+    display: flex;
+    gap: 12px;
+    padding: var(--space-md);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text1);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+    background-color: var(--surface2);
+  }
+  .alert-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 18px;
+  }
+  .alert-success {
+    border-color: var(--success);
+    background-color: var(--success-bg);
+  }
+  .alert-success .alert-icon {
+    color: var(--success);
+  }
+  .alert-warning {
+    border-color: var(--warning);
+    background-color: var(--warning-bg);
+  }
+  .alert-warning .alert-icon {
+    color: var(--warning);
+  }
+  .alert-error {
+    border-color: var(--error);
+    background-color: var(--error-bg);
+  }
+  .alert-error .alert-icon {
+    color: var(--error);
+  }
+
+  /* Breadcrumb: 12px text3, " / " separators, current page in ink. */
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .breadcrumb a {
+    color: var(--text3);
+    font-weight: 400;
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    color: var(--ink);
+  }
+
+  /* Data table: hairline rules, header 12px 500 text3, hover fills surface1. */
+  .table-wrap {
+    overflow-x: auto;
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text3);
+    text-align: left;
+    border-bottom: 1px solid var(--outline);
+  }
+  .data-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--outline);
+  }
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tbody tr:hover {
+    background-color: var(--surface1);
+  }
+  .data-table .num {
+    text-align: right;
+    color: var(--text2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Stats strip: cells divided by hairlines. */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    background-color: var(--outline);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 22px 20px;
+    background-color: var(--surface2);
+  }
+  .stat-num {
+    font-size: var(--text-title-size);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: var(--text-title-ls);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* List rows: 48px minimum, hairline between rows. */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    min-height: 48px;
+    padding: 12px 0;
+  }
+  .row + .row {
+    border-top: 1px solid var(--outline);
+  }
+
+  /* Accordion: hairline container, head 16×20 at 15px 500, caret in text3. */
+  details.accordion {
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+  }
+  details.accordion > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+  details.accordion > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.accordion > summary::after {
+    content: "";
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='none' stroke='%236e6e68' stroke-linecap='round' stroke-linejoin='round' stroke-width='16' d='m208 96-80 80-80-80'/%3E%3C/svg%3E")
+      no-repeat center / 16px;
+  }
+  details.accordion[open] > summary::after {
+    transform: rotate(180deg);
+  }
+  details.accordion > summary:focus-visible {
+    outline: none;
+    background-color: var(--highlight-mist);
+  }
+  .accordion-body {
+    padding: 0 20px 16px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  /* Quieter accordion nested inside a card. */
+  details.accordion-quiet {
+    border: none;
+    background-color: transparent;
+  }
+  details.accordion-quiet > summary {
+    padding: 0;
+    font-size: 14px;
+  }
+  details.accordion-quiet > .accordion-body {
+    padding: 8px 0 0;
+  }
+
+  /* Header nav: ghost items; the current page is an ink fill. */
+  .nav-item {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text1);
+    text-decoration: none;
+    border-radius: var(--r-control);
+    transition:
+      background-color var(--dur-instant) var(--ease-fast),
+      color var(--dur-instant) var(--ease-fast);
+  }
+  .nav-item:hover {
+    background-color: var(--surface1);
+  }
+  .nav-item[aria-current="page"] {
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  .nav-item:focus-visible {
+    outline: none;
+    background-color: var(--highlight-mist);
+    color: var(--on-highlighter);
+  }
+
+  /* Spinner: 2px stroke in currentColor, 800ms rotation. */
+  .spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: plspin 800ms linear infinite;
+  }
+  @keyframes plspin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
 
-/* Rendered Markdown from AI feedback and summaries */
+/* Rendered Markdown from AI feedback and summaries. */
 .md > * + * {
-  @apply mt-3;
+  margin-top: 12px;
 }
 .md h1,
 .md h2,
 .md h3 {
-  @apply mt-5 font-semibold;
-}
-.md h2 {
-  @apply text-base;
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 500;
 }
 .md ul {
-  @apply list-disc space-y-1 pl-5;
+  list-style: disc;
+  padding-left: 20px;
 }
 .md ol {
-  @apply list-decimal space-y-1 pl-5;
+  list-style: decimal;
+  padding-left: 20px;
 }
-.md strong {
-  @apply font-semibold;
+.md li + li {
+  margin-top: 4px;
 }
-.md a {
-  @apply link;
+.md code {
+  padding: 1px 4px;
+  background-color: var(--code-surface);
+  border-radius: var(--r-control);
 }

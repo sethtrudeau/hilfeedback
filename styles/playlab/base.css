@@ -1,0 +1,24 @@
+/* Minimal document defaults. The weight ceiling is part of the system, not a reset. */
+html, body {
+  font-family: var(--font);
+  background: var(--background);
+  color: var(--text1);
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-lh);
+  margin: 0;
+}
+
+/* Weight ceiling — Medium (500) is the heaviest weight in the system.
+   Browser defaults would render these at 700; clamp them. */
+b, strong, th, h1, h2, h3, h4, h5, h6 { font-weight: 500; }
+
+/* Sentence case throughout, no tracking substitutes for weight. */
+h1, h2, h3, h4, h5, h6 { margin: 0; letter-spacing: -0.014em; }
+
+a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; font-weight: 500; }
+a:hover { color: var(--link); text-decoration-thickness: 2px; }
+
+::selection { background: var(--highlight-mist); color: var(--on-highlighter); }

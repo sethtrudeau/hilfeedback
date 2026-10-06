@@ -3,34 +3,48 @@ import { requireUser } from "@/lib/auth";
 import { pendingQueue, submittedProjects, type PendingItem } from "@/lib/data";
 import { formatTime } from "@/lib/format";
 import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
-import { Badge } from "@/components/ui";
+import { PageHead, Tag } from "@/components/ui";
 
 function Item({ item }: { item: PendingItem }) {
   return (
-    <li className="space-y-2 border-t border-stone-100 py-3 first:border-t-0">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="font-medium">{item.learner_name}</span>
-          <span className="text-stone-400">·</span>
-          <span>{item.project_title}</span>
-          <span className="text-stone-400">·</span>
-          <span>
-            {item.artifact_title} v{item.version_number}
-          </span>
-          <Badge>{ARTIFACT_TYPE_LABELS[item.artifact_type]}</Badge>
-          {item.audio_mode === "listen" && <Badge>Listen</Badge>}
+    <li className="row flex-col items-stretch gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="mb-2 flex flex-wrap gap-2">
+            <Tag>{ARTIFACT_TYPE_LABELS[item.artifact_type]}</Tag>
+            {item.audio_mode === "listen" && <Tag>Listen</Tag>}
+          </div>
+          <div className="text-base font-medium">
+            {item.artifact_title}, v{item.version_number}
+          </div>
+          <div className="meta">
+            {item.learner_name}, {item.project_title}
+          </div>
         </div>
-        <Link href={`/versions/${item.artifact_version_id}`} className="btn-secondary">
+        <Link href={`/versions/${item.artifact_version_id}`} className="btn-secondary btn-sm">
           Review
         </Link>
       </div>
-      <p className="text-sm text-stone-600">
-        {item.reason} <span className="text-xs text-stone-400">({formatTime(item.created_at)})</span>
-      </p>
+      <div>
+        <p className="text-sm">{item.reason}</p>
+        <p className="caption">{formatTime(item.created_at)}</p>
+      </div>
       {item.audio_mode === "listen" && item.file_path && (
         <audio controls src={`/files/${item.file_path}`} className="w-full" />
       )}
     </li>
+  );
+}
+
+function Section({ title, description, count, children }: { title: string; description: string; count: number; children: React.ReactNode }) {
+  return (
+    <section className="card">
+      <h2 className="h2">
+        {title} <span className="text-fg3">{count}</span>
+      </h2>
+      <p className="mt-1 text-sm">{description}</p>
+      {count === 0 ? <p className="meta mt-3">Nothing waiting.</p> : <ul className="mt-2">{children}</ul>}
+    </section>
   );
 }
 
@@ -39,7 +53,11 @@ export default async function PendingPage() {
   const queue = pendingQueue(user.id);
   const finals = submittedProjects(user.id);
   const groups: [string, string, PendingItem[]][] = [
-    ["Always human", "Video, games and Listen-mode audio, plus anything the AI can't read.", queue.filter((q) => q.layer === "rule")],
+    [
+      "Always human",
+      "Video, games and Listen-mode audio, plus anything the AI can’t read.",
+      queue.filter((q) => q.layer === "rule"),
+    ],
     [
       "Requested by learner",
       "The learner asked for a person to look at this.",
@@ -53,46 +71,34 @@ export default async function PendingPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <h1 className="h1">Pending</h1>
+    <div className="flex flex-col gap-7">
+      <PageHead
+        title="Pending"
+        subtitle={`${queue.length} artifact${queue.length === 1 ? "" : "s"} waiting for feedback, ${finals.length} final project${finals.length === 1 ? "" : "s"} to evaluate.`}
+      />
 
-      <section className="card">
-        <h2 className="h2">Final projects to evaluate ({finals.length})</h2>
-        {finals.length === 0 ? (
-          <p className="mt-2 text-sm text-stone-500">Nothing waiting.</p>
-        ) : (
-          <ul className="mt-2">
-            {finals.map((p) => (
-              <li key={p.id} className="flex items-center justify-between border-t border-stone-100 py-3 first:border-t-0">
-                <span className="text-sm">
-                  <span className="font-medium">{p.learner_name}</span> · {p.title}{" "}
-                  <span className="text-xs text-stone-400">(submitted {formatTime(p.submitted_at!)})</span>
-                </span>
-                <Link href={`/evaluator/projects/${p.id}`} className="btn-primary">
-                  Evaluate
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <Section title="Final projects to evaluate" description="Submitted projects are locked and ready for the rubric." count={finals.length}>
+        {finals.map((p) => (
+          <li key={p.id} className="row justify-between">
+            <div className="min-w-0">
+              <div className="text-base font-medium">{p.title}</div>
+              <div className="meta">
+                {p.learner_name}, submitted {formatTime(p.submitted_at!)}
+              </div>
+            </div>
+            <Link href={`/evaluator/projects/${p.id}`} className="btn-primary btn-sm">
+              Evaluate
+            </Link>
+          </li>
+        ))}
+      </Section>
 
       {groups.map(([title, description, items]) => (
-        <section key={title} className="card">
-          <h2 className="h2">
-            {title} ({items.length})
-          </h2>
-          <p className="text-xs text-stone-500">{description}</p>
-          {items.length === 0 ? (
-            <p className="mt-2 text-sm text-stone-500">Nothing waiting.</p>
-          ) : (
-            <ul className="mt-2">
-              {items.map((item) => (
-                <Item key={item.id} item={item} />
-              ))}
-            </ul>
-          )}
-        </section>
+        <Section key={title} title={title} description={description} count={items.length}>
+          {items.map((item) => (
+            <Item key={item.id} item={item} />
+          ))}
+        </Section>
       ))}
     </div>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { logout } from "./actions";
 import { currentUser } from "@/lib/auth";
 import { pendingCount, unreadCount } from "@/lib/data";
+import { NavLinks } from "@/components/NavLinks";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,52 +14,48 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
   const unread = user ? unreadCount(user.id) : 0;
+  const nav =
+    user?.role === "learner"
+      ? [{ href: "/learner", label: "My projects" }]
+      : user
+        ? [
+            { href: "/evaluator", label: "Learners" },
+            { href: "/evaluator/pending", label: "Pending", count: pendingCount(user.id) },
+          ]
+        : [];
 
   return (
     <html lang="en">
+      <head>
+        {/* Neue Haas Grotesk Text (Adobe Fonts kit) and Phosphor icons, per the design system. */}
+        <link rel="stylesheet" href="https://use.typekit.net/hku1ywo.css" />
+        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css" />
+      </head>
       <body>
-        <header className="border-b border-stone-200 bg-white">
-          <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-            <Link href="/" className="font-semibold text-teal-800">
-              Flex Credit Feedback
+        <header>
+          <div className="page-bar flex min-h-16 flex-wrap items-center gap-x-8 gap-y-2 py-3">
+            <Link href="/" className="plain flex items-center gap-3">
+              <img src="/playlab-logo.svg" alt="Playlab" className="h-6 w-auto" />
+              <span className="text-[13px] font-medium text-fg2">Flex Credit Feedback</span>
             </Link>
+            {user && <NavLinks items={nav} />}
             {user && (
-              <nav className="flex gap-4 text-sm">
-                {user.role === "learner" ? (
-                  <Link href="/learner" className="link">
-                    My projects
-                  </Link>
-                ) : (
-                  <>
-                    <Link href="/evaluator" className="link">
-                      Learners
-                    </Link>
-                    <Link href="/evaluator/pending" className="link">
-                      Pending ({pendingCount(user.id)})
-                    </Link>
-                  </>
-                )}
-              </nav>
-            )}
-            {user && (
-              <div className="ml-auto flex items-center gap-4 text-sm">
-                <Link href="/notifications" className="link">
+              <div className="ml-auto flex items-center gap-3">
+                <Link href="/notifications" className="nav-item inline-flex items-center gap-1.5">
                   Notifications
-                  {unread > 0 && (
-                    <span className="ml-1 rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white">{unread}</span>
-                  )}
+                  {unread > 0 && <span className="count">{unread}</span>}
                 </Link>
-                <span className="text-stone-600">
-                  {user.name} · <span className="capitalize">{user.role}</span>
+                <span className="meta">
+                  {user.name}, {user.role}
                 </span>
                 <form action={logout}>
-                  <button className="text-stone-500 hover:text-stone-800">Log out</button>
+                  <button className="btn-ghost btn-sm">Log out</button>
                 </form>
               </div>
             )}
           </div>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <main className="page">{children}</main>
       </body>
     </html>
   );

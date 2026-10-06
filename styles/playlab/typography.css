@@ -1,0 +1,47 @@
+/* Perfect Fourth scale (1.333) anchored at 16px body. Thirteen semantic sizes. */
+:root {
+  --text-hero-size: clamp(48px, 6.5vw, 72px);
+  --text-hero-lh: 1.04;
+  --text-hero-ls: -0.028em;
+
+  --text-display-size: 50px;
+  --text-display-lh: 1.08;
+  --text-display-ls: -0.024em;
+
+  --text-title-size: 38px;
+  --text-title-lh: 1.15;
+  --text-title-ls: -0.020em;
+
+  --text-heading-size: 28px;
+  --text-heading-lh: 1.2;
+  --text-heading-ls: -0.014em;
+
+  --text-subheading-size: 21px;
+  --text-subheading-lh: 1.3;
+  --text-subheading-ls: -0.008em;
+
+  --text-body-size: 16px;
+  --text-body-lh: 1.55;
+
+  --text-body-sm-size: 14px;
+  --text-body-sm-lh: 1.5;
+
+  --text-meta-size: 13px;
+  --text-meta-lh: 1.45;
+
+  --text-meta-sm-size: 12px;
+  --text-meta-sm-lh: 1.4;
+
+  --text-chrome-size: 11px;
+  --text-chrome-lh: 1.3;
+
+  --text-label-size: 11px;
+  --text-label-lh: 1.3;
+
+  --text-caption-size: 12px;
+  --text-caption-lh: 1.4;
+
+  --text-quote-size: 28px;
+  --text-quote-lh: 1.3;
+  --text-quote-ls: -0.014em;
+}
