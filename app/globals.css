@@ -26,6 +26,16 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  /* Hues and highlights used as fills (tags, header bands, icon tiles). Text on them is ink. */
+  --color-pale-sky: var(--pale-sky);
+  --color-pale-cyan: var(--pale-cyan);
+  --color-palest-pink: var(--palest-pink);
+  --color-pale-pink: var(--pale-pink);
+  --color-tan: var(--tan);
+  --color-warm-tan: var(--warm-tan);
+  --color-olive: var(--olive);
+  --color-chartreuse: var(--chartreuse);
+  --color-highlight-yellow: var(--highlight-yellow);
   --radius-control: var(--r-control);
   --radius-surface: var(--r-surface);
 }
@@ -207,6 +217,39 @@
     outline: none;
     background-color: var(--ink);
     color: var(--ink-inverse);
+  }
+  /* Tinted header card: a pale band names the card; colour enters as fill, never border. */
+  .band-card {
+    overflow: hidden;
+    background-color: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: var(--r-surface);
+  }
+  .band {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-md);
+    padding: 14px var(--space-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .band-body {
+    padding: var(--space-lg);
+  }
+  /* Tinted icon tile: 48px, 4px radius, ink glyph. */
+  .icon-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    color: var(--ink);
+    border-radius: var(--r-control);
   }
   /* Colour enters a card as fill, not border. */
   .panel {

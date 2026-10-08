@@ -3,12 +3,11 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { aiTurns, getEvaluation, getProjectFor, humanFeedback, listArtifacts, pendingVersionIds } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
 import { ArtifactView } from "@/components/ArtifactView";
 import { BriefPanel } from "@/components/BriefPanel";
 import { EvaluationView } from "@/components/EvaluationView";
 import { HumanFeedbackList } from "@/components/HumanFeedbackList";
-import { Alert, Icon, Md, PageHead, ProjectStatusBadge, StatusBadge, Tag } from "@/components/ui";
+import { Alert, Icon, Md, PageHead, ProjectStatusBadge, StatusBadge, TypeTag } from "@/components/ui";
 
 export default async function LearnerProjectPage({
   params,
@@ -84,7 +83,7 @@ export default async function LearnerProjectPage({
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <div className="mb-2 flex flex-wrap gap-2">
-                    <Tag>{ARTIFACT_TYPE_LABELS[a.type]}</Tag>
+                    <TypeTag type={a.type} />
                     {pending.has(latest.id) && <StatusBadge tone="warning">Awaiting human review</StatusBadge>}
                   </div>
                   <h2 className="h2">{a.title}</h2>
@@ -114,7 +113,7 @@ export default async function LearnerProjectPage({
           <section key={a.id} className="card flex flex-col gap-4">
             <div>
               <div className="mb-2">
-                <Tag>{ARTIFACT_TYPE_LABELS[a.type]}</Tag>
+                <TypeTag type={a.type} />
               </div>
               <h2 className="h2">{a.title}</h2>
               <p className="meta mt-1">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { listLearnerProjects } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { Icon, PageHead, ProjectStatusBadge, StatusBadge } from "@/components/ui";
+import { Icon, IconTile, PageHead, ProjectStatusBadge, StatusBadge } from "@/components/ui";
 
 export default async function LearnerHome() {
   const user = await requireUser("learner");
@@ -34,6 +34,9 @@ export default async function LearnerHome() {
         <div className="grid gap-6 sm:grid-cols-2">
           {projects.map((p) => (
             <Link key={p.id} href={`/learner/projects/${p.id}`} className="card flex flex-col gap-2">
+              <div className="mb-2">
+                <IconTile icon="folder-open" seed={p.id} />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <ProjectStatusBadge status={p.status} />
                 {p.pending_count > 0 && <StatusBadge tone="warning">{p.pending_count} awaiting human review</StatusBadge>}

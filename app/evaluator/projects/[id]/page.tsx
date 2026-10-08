@@ -12,10 +12,9 @@ import {
   pendingVersionIds,
 } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
 import { BriefPanel } from "@/components/BriefPanel";
 import { EvaluationView } from "@/components/EvaluationView";
-import { Alert, PageHead, ProjectStatusBadge, Tag } from "@/components/ui";
+import { Alert, PageHead, ProjectStatusBadge, TypeTag } from "@/components/ui";
 import { EvaluationForm } from "./EvaluationForm";
 import { SummaryPanel } from "./SummaryPanel";
 
@@ -87,7 +86,7 @@ export default async function EvaluatorProjectPage({ params }: { params: Promise
                   <tr key={a.id}>
                     <td className="font-medium">{a.title}</td>
                     <td>
-                      <Tag>{ARTIFACT_TYPE_LABELS[a.type]}</Tag>
+                      <TypeTag type={a.type} />
                     </td>
                     <td className="num">{a.versions.length - 1}</td>
                     <td>

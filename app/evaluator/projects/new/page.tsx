@@ -24,10 +24,15 @@ export default async function EvaluatorNewProjectPage({
         subtitle="Brainstorm a plan with the Flex Credit Guide, then set the project up for a learner."
       />
       <div className="grid items-start gap-6 lg:grid-cols-12">
-        <section className="card flex flex-col gap-3 p-0 lg:col-span-7">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-4">
-            <h2 className="text-[15px] font-medium">Flex Credit Guide</h2>
-            <a href={FLEX_CREDIT_GUIDE_EMBED_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm">
+        <section className="band-card lg:col-span-7">
+          <div className="band bg-pale-sky">
+            <h2>Flex Credit Guide</h2>
+            <a
+              href={FLEX_CREDIT_GUIDE_EMBED_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="plain inline-flex items-center gap-1.5 text-sm underline underline-offset-2"
+            >
               Open in a new tab
               <Icon name="arrow-square-out" />
             </a>
@@ -36,7 +41,7 @@ export default async function EvaluatorNewProjectPage({
             src={FLEX_CREDIT_GUIDE_EMBED_URL}
             title="Flex Credit Guide"
             allow="clipboard-write; microphone"
-            className="h-[760px] w-full rounded-b-surface border-0 border-t border-outline"
+            className="block h-[760px] w-full border-0"
           />
         </section>
         <div className="flex flex-col gap-6 lg:col-span-5">

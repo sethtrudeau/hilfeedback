@@ -2,8 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { pendingQueue, submittedProjects, type PendingItem } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
-import { PageHead, Tag } from "@/components/ui";
+import { BandCard, PageHead, Tag, TypeTag } from "@/components/ui";
 
 function Item({ item }: { item: PendingItem }) {
   return (
@@ -11,7 +10,7 @@ function Item({ item }: { item: PendingItem }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap gap-2">
-            <Tag>{ARTIFACT_TYPE_LABELS[item.artifact_type]}</Tag>
+            <TypeTag type={item.artifact_type} />
             {item.audio_mode === "listen" && <Tag>Listen</Tag>}
           </div>
           <div className="text-base font-medium">
@@ -36,15 +35,24 @@ function Item({ item }: { item: PendingItem }) {
   );
 }
 
-function Section({ title, description, count, children }: { title: string; description: string; count: number; children: React.ReactNode }) {
+function Section({
+  title,
+  description,
+  count,
+  tint = "bg-mist",
+  children,
+}: {
+  title: string;
+  description: string;
+  count: number;
+  tint?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="card">
-      <h2 className="h2">
-        {title} <span className="text-fg3">{count}</span>
-      </h2>
-      <p className="mt-1 text-sm">{description}</p>
+    <BandCard title={title} tint={tint} aside={<span className="count">{count}</span>}>
+      <p className="text-sm">{description}</p>
       {count === 0 ? <p className="meta mt-3">Nothing waiting.</p> : <ul className="mt-2">{children}</ul>}
-    </section>
+    </BandCard>
   );
 }
 
@@ -77,7 +85,12 @@ export default async function PendingPage() {
         subtitle={`${queue.length} artifact${queue.length === 1 ? "" : "s"} waiting for feedback, ${finals.length} final project${finals.length === 1 ? "" : "s"} to evaluate.`}
       />
 
-      <Section title="Final projects to evaluate" description="Submitted projects are locked and ready for the rubric." count={finals.length}>
+      <Section
+        title="Final projects to evaluate"
+        description="Submitted projects are locked and ready for the rubric."
+        count={finals.length}
+        tint="bg-highlight-yellow"
+      >
         {finals.map((p) => (
           <li key={p.id} className="row justify-between">
             <div className="min-w-0">

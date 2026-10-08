@@ -4,12 +4,11 @@ import { requestHumanReview } from "@/app/actions";
 import { requireUser } from "@/lib/auth";
 import { aiTurns, getProjectFor, getUser, getVersion, humanFeedback, listVersions, routingDecisions } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { ARTIFACT_TYPE_LABELS } from "@/lib/types";
 import { ArtifactView } from "@/components/ArtifactView";
 import { FeedbackChat } from "@/components/FeedbackChat";
 import { HumanFeedbackList } from "@/components/HumanFeedbackList";
 import { SubmitButton } from "@/components/SubmitButton";
-import { Alert, Icon, PageHead, ProjectStatusBadge, StatusBadge, Tag } from "@/components/ui";
+import { Alert, BandCard, Icon, PageHead, ProjectStatusBadge, StatusBadge, Tag, TypeTag } from "@/components/ui";
 import { RespondForm } from "./RespondForm";
 
 export default async function VersionPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,7 +38,7 @@ export default async function VersionPage({ params }: { params: Promise<{ id: st
         ]}
         badges={
           <>
-            <Tag>{ARTIFACT_TYPE_LABELS[version.artifact_type]}</Tag>
+            <TypeTag type={version.artifact_type} />
             {version.audio_mode && <Tag>{version.audio_mode === "listen" ? "Listen" : "Transcribe"}</Tag>}
             {pending.length > 0 ? (
               <StatusBadge tone="warning">Awaiting human review</StatusBadge>
@@ -103,14 +102,12 @@ export default async function VersionPage({ params }: { params: Promise<{ id: st
 
         <div className="flex flex-col gap-6">
           {human.length > 0 && (
-            <section className="card flex flex-col gap-4">
-              <h2 className="h2">Feedback from {isLearner ? "your evaluator" : "evaluators"}</h2>
+            <BandCard title={`Feedback from ${isLearner ? "your evaluator" : "evaluators"}`} tint="bg-highlight-yellow">
               <HumanFeedbackList items={human} />
-            </section>
+            </BandCard>
           )}
 
-          <section className="card flex flex-col gap-4">
-            <h2 className="h2">AI feedback</h2>
+          <BandCard title="AI feedback" tint="bg-pale-sky">
             {version.ai_reviewable ? (
               <FeedbackChat
                 versionId={version.id}
@@ -121,7 +118,7 @@ export default async function VersionPage({ params }: { params: Promise<{ id: st
             ) : (
               <p className="text-sm">No AI feedback for this artifact. {ruleDecision?.reason ?? ""}</p>
             )}
-          </section>
+          </BandCard>
 
           {!isLearner && (
             <section className="card flex flex-col gap-4">

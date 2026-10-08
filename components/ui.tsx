@@ -1,15 +1,65 @@
 import Link from "next/link";
 import Markdown from "react-markdown";
-import type { ProjectStatus, Rubric } from "@/lib/types";
+import { ARTIFACT_TYPE_LABELS, type ArtifactType, type ProjectStatus, type Rubric } from "@/lib/types";
 
 /** Phosphor icon (regular weight), loaded from the CDN in app/layout.tsx. Decorative by default. */
 export function Icon({ name, size = 16, className = "" }: { name: string; size?: number; className?: string }) {
   return <i className={`ph ph-${name} ${className}`} style={{ fontSize: size }} aria-hidden="true" />;
 }
 
-/** Static category label. */
-export function Tag({ children }: { children: React.ReactNode }) {
-  return <span className="tag">{children}</span>;
+/** Static category label. An optional tint fills it with one of the palette hues. */
+export function Tag({ tint = "", children }: { tint?: string; children: React.ReactNode }) {
+  return <span className={`tag ${tint}`}>{children}</span>;
+}
+
+// One pale hue per artifact type, so types read at a glance. Full class names so Tailwind keeps them.
+const TYPE_TINTS: Record<ArtifactType, string> = {
+  document: "bg-pale-sky",
+  presentation: "bg-palest-pink",
+  spreadsheet: "bg-olive",
+  audio: "bg-pale-cyan",
+  image: "bg-tan",
+  video: "bg-pale-pink",
+  game: "bg-chartreuse",
+  other: "",
+};
+
+export function TypeTag({ type }: { type: ArtifactType }) {
+  return <Tag tint={TYPE_TINTS[type]}>{ARTIFACT_TYPE_LABELS[type]}</Tag>;
+}
+
+/** Card whose pale header band names it. `tint` is a bg-* class from the palette. */
+export function BandCard({
+  title,
+  tint,
+  aside,
+  children,
+}: {
+  title: string;
+  tint: string;
+  aside?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="band-card">
+      <h2 className={`band ${tint}`}>
+        <span>{title}</span>
+        {aside}
+      </h2>
+      <div className="band-body">{children}</div>
+    </section>
+  );
+}
+
+const TILE_TINTS = ["bg-highlight-yellow", "bg-pale-sky", "bg-palest-pink", "bg-pale-cyan", "bg-olive", "bg-tan"];
+
+/** Tinted icon tile; the tint is picked from `seed` so each item keeps a stable colour. */
+export function IconTile({ icon, seed }: { icon: string; seed: number }) {
+  return (
+    <span className={`icon-tile ${TILE_TINTS[seed % TILE_TINTS.length]}`}>
+      <Icon name={icon} size={22} />
+    </span>
+  );
 }
 
 type Tone = "neutral" | "info" | "success" | "warning" | "error";
