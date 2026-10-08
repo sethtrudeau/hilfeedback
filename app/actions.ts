@@ -53,42 +53,71 @@ export async function logout() {
 
 // ---------- Projects (learner) ----------
 
-export async function createProject(_: FormState, formData: FormData): Promise<FormState> {
-  const user = await requireUser("learner");
-  const title = str(formData, "title");
-  if (!title) return { error: "Give your project a title." };
-  if (!user.evaluator_id) return { error: "Your account has no evaluator assigned." };
-
+/** Reads the Flex Credit plan from the form's `brief_file` upload and/or pasted `brief_text`. */
+async function readBrief(formData: FormData): Promise<{ brief: string; briefFile: string | null } | { error: string }> {
   const parts = [str(formData, "brief_text")];
   let briefFile: string | null = null;
   const file = formData.get("brief_file");
   if (isFile(file)) {
     const saved = await saveUpload(file);
     const kind = fileKind(saved.originalName, saved.mime);
-    if (!["pdf", "docx", "text"].includes(kind)) return { error: "The brief must be a PDF, Word (.docx) or text file." };
+    if (!["pdf", "docx", "text"].includes(kind)) return { error: "The plan must be a PDF, Word (.docx) or text file." };
     try {
       parts.push((await extractText(saved.storedName, kind))?.trim() ?? "");
     } catch (err) {
-      return { error: `Couldn't read the brief file: ${message(err)}` };
+      return { error: `Couldn’t read the plan file: ${message(err)}` };
     }
     briefFile = saved.storedName;
   }
   const brief = parts.filter(Boolean).join("\n\n");
-  if (!brief) return { error: "Attach your Flex Credit brief or paste its text (R4)." };
+  return brief ? { brief, briefFile } : { error: "Attach the Flex Credit plan or paste its text." };
+}
 
+/** Creates the project, extracting its rubric. A failed extraction leaves the rubric empty, with a retry on the page. */
+async function insertProject(learnerId: number, evaluatorId: number, title: string, brief: string, briefFile: string | null) {
   let rubricJson: string | null = null;
   try {
     rubricJson = JSON.stringify(await extractRubric(brief));
   } catch (err) {
     console.error("Rubric extraction failed:", err);
   }
+  return Number(
+    db()
+      .prepare(
+        "INSERT INTO projects (learner_id, evaluator_id, title, brief_text, brief_file, rubric_json) VALUES (?, ?, ?, ?, ?, ?)",
+      )
+      .run(learnerId, evaluatorId, title, brief, briefFile, rubricJson).lastInsertRowid,
+  );
+}
 
-  const { lastInsertRowid } = db()
-    .prepare(
-      "INSERT INTO projects (learner_id, evaluator_id, title, brief_text, brief_file, rubric_json) VALUES (?, ?, ?, ?, ?, ?)",
-    )
-    .run(user.id, user.evaluator_id, title, brief, briefFile, rubricJson);
-  redirect(`/learner/projects/${lastInsertRowid}`);
+export async function createProject(_: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser("learner");
+  const title = str(formData, "title");
+  if (!title) return { error: "Give your project a title." };
+  if (!user.evaluator_id) return { error: "Your account has no evaluator assigned." };
+
+  const read = await readBrief(formData);
+  if ("error" in read) return read;
+  const id = await insertProject(user.id, user.evaluator_id, title, read.brief, read.briefFile);
+  redirect(`/learner/projects/${id}`);
+}
+
+/** Evaluator creates a project for one of their learners, typically from a plan brainstormed in the Flex Credit Guide. */
+export async function createProjectForLearner(_: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser("evaluator");
+  const learner = db()
+    .prepare("SELECT * FROM users WHERE id = ? AND role = 'learner' AND evaluator_id = ?")
+    .get(Number(formData.get("learner_id")), user.id) as User | undefined;
+  if (!learner) return { error: "Choose one of your learners." };
+  const title = str(formData, "title");
+  if (!title) return { error: "Give the project a title." };
+
+  const read = await readBrief(formData);
+  if ("error" in read) return read;
+  const id = await insertProject(learner.id, user.id, title, read.brief, read.briefFile);
+  notify(learner.id, "project_created", `${user.name} set up a new project for you: "${title}".`, `/learner/projects/${id}`);
+  revalidatePath("/", "layout");
+  redirect(`/evaluator/projects/${id}`);
 }
 
 export async function retryRubric(formData: FormData) {

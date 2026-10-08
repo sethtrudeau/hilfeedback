@@ -396,6 +396,20 @@
     background-color: var(--error-bg);
     color: var(--error);
   }
+  /* Numbered badge: ink circle holding a numeral. */
+  .num-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-inverse);
+    background-color: var(--ink);
+    border-radius: 50%;
+  }
   .count {
     display: inline-flex;
     align-items: center;

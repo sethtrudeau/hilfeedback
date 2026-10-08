@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { listEvaluatorLearners } from "@/lib/data";
 import { formatTime } from "@/lib/format";
-import { PageHead, ProjectStatusBadge } from "@/components/ui";
+import { Icon, PageHead, ProjectStatusBadge } from "@/components/ui";
 
 export default async function EvaluatorHome() {
   const user = await requireUser("evaluator");
@@ -14,12 +14,24 @@ export default async function EvaluatorHome() {
       <PageHead
         title="Learners"
         subtitle={`${learners.length} learner${learners.length === 1 ? "" : "s"}, ${projectCount} project${projectCount === 1 ? "" : "s"}.`}
+        actions={
+          <Link href="/evaluator/projects/new" className="btn-primary btn-sm">
+            <Icon name="plus" />
+            New project
+          </Link>
+        }
       />
       {learners.map((l) => (
         <section key={l.id} className="flex flex-col gap-3">
-          <div>
-            <h2 className="h2">{l.name}</h2>
-            <p className="meta">{l.email}</p>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="h2">{l.name}</h2>
+              <p className="meta">{l.email}</p>
+            </div>
+            <Link href={`/evaluator/projects/new?learner=${l.id}`} className="btn-ghost btn-sm">
+              <Icon name="plus" />
+              New project for {l.name.split(" ")[0]}
+            </Link>
           </div>
           {l.projects.length === 0 ? (
             <p className="text-sm">No projects yet.</p>
