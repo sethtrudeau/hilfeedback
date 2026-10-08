@@ -51,15 +51,12 @@ export function BandCard({
   );
 }
 
-const TILE_TINTS = ["bg-highlight-yellow", "bg-pale-sky", "bg-palest-pink", "bg-pale-cyan", "bg-olive", "bg-tan"];
+// The palette's palest hues, light enough that fragment text in --text2 stays readable on them.
+const CARD_TINTS = ["bg-pale-sky", "bg-palest-pink", "bg-highlight-yellow", "bg-pale-cyan", "bg-pale-pink"];
 
-/** Tinted icon tile; the tint is picked from `seed` so each item keeps a stable colour. */
-export function IconTile({ icon, seed }: { icon: string; seed: number }) {
-  return (
-    <span className={`icon-tile ${TILE_TINTS[seed % TILE_TINTS.length]}`}>
-      <Icon name={icon} size={22} />
-    </span>
-  );
+/** A card fill picked from `seed`, so each item keeps a stable colour. */
+export function cardTint(seed: number) {
+  return `card-tinted ${CARD_TINTS[seed % CARD_TINTS.length]}`;
 }
 
 type Tone = "neutral" | "info" | "success" | "warning" | "error";
